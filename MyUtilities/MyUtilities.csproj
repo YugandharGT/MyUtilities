@@ -9,6 +9,7 @@
     <PackageReference Include="itext7" Version="7.1.12" />
     <PackageReference Include="sautinsoft.pdffocus" Version="7.5.3.27" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
+     <PackageReference Include="System.Security.Cryptography.Cng" Version="4.3.0" />
     <PackageReference Include="Tesseract.Net.SDK" Version="1.15.342" />
   </ItemGroup>
 
