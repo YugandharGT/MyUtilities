@@ -9,7 +9,7 @@ on:
     paths-ignore: -'*.md'
 jobs:
   build:
-    runs on:windows-latest
+    runs on: windows-latest
     steps:
       - uses: actions/checkout@v1
         name: Checkout Code
@@ -19,17 +19,13 @@ jobs:
      
       - name: Setup MSBuild Path
         uses: warrenbuckley/Setup-MSBuild@v1
-
-      - name: Build and Publish Web App
-        run: msbuild MyUtilities.sln /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
- 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v1.0.0
-        with:
-          name: published_webapp
-          path: bin\Release\Publish
+      
       - name: SonarQube Scan
         uses: kitabisa/sonarqube-action@v1.2.0
         with:
           host: ${{ secrets.SONARQUBE_HOST }}
           login: ${{ secrets.SONARQUBE_TOKEN }}
+          
+      - name: Build and Publish Web App
+        run: msbuild MyUtilities.sln /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+
