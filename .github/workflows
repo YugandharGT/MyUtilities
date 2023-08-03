@@ -1,7 +1,8 @@
 name: build-test-dev
 on:
   push:
-    branches:[develop]
+    branches:
+      -master
     paths-ignore: -'*.md'
   pull_request:
     branches:[opened, synchronize, reopened]
@@ -10,34 +11,21 @@ jobs:
   build:
     runs on:windows-latest
     steps:
-    - name: Checking out
-      uses: actions/checkout@master
-      with:
-        # Disabling shallow clone is recommended for improving relevancy of reporting
-        fetch-depth: 0
-    - name: SonarQube Scan
-      uses: kitabisa/sonarqube-action@v1.2.0
-      with:
-        host: ${{ secrets.SONARQUBE_HOST }}
-        login: ${{ secrets.SONARQUBE_TOKEN }}
       - uses: actions/checkout@v1
-      name: Checkout Code
+        name: Checkout Code
+
+      - name: Restore NuGet Packages
+        run: nuget restore MyUtilities.sln
      
-    - name: Setup MSBuild Path
-      uses: warrenbuckley/Setup-MSBuild@v1
-       
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.2
-     
-    - name: Restore NuGet Packages
-      run: nuget restore MyUtilities.sln
+      - name: Setup MSBuild Path
+        uses: warrenbuckley/Setup-MSBuild@v1
+
+      - name: Build and Publish Web App
+        run: msbuild MyUtilities.sln /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
  
-    - name: Build and Publish Web App
-      run: msbuild MyUtilities.sln /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
- 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: published_webapp
-        path: bin\Release\Publish
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: published_webapp
+          path: bin\Release\Publish
 
