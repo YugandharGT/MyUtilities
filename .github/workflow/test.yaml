@@ -14,17 +14,27 @@ jobs:
       - uses: actions/checkout@v1
         name: Checkout Code
 
-      - name: Restore NuGet Packages
-        run: nuget restore MyUtilities.sln
-     
-      - name: Setup MSBuild Path
-        uses: warrenbuckley/Setup-MSBuild@v1
-      
       - name: SonarQube Scan
         uses: kitabisa/sonarqube-action@v1.2.0
         with:
           host: ${{ secrets.SONARQUBE_HOST }}
           login: ${{ secrets.SONARQUBE_TOKEN }}
+          
+      #Build the solutions
+      - task: VSBuild@1
+        displayName: 'Build MyUtilities'
+        inputs:
+          solution: 'MyUtilities/MyUtilities.sln'
+          msbuildArgs: '/p:DeployOnBuild=true 
+                        /p:WebPublishMethod=Package 
+                        /p:PackageAsSingleFile=true 
+                        /p:SkipInvalidConfigurations=true 
+                        /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" 
+                        /p:DeployIisAppPath="Default Web Site"'
+          platform: 'Any CPU'
+          configuration: 'Release'
+      
+
           
       - name: Build and Publish Web App
         run: msbuild MyUtilities.sln /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
