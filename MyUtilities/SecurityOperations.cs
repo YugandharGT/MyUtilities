@@ -22,7 +22,7 @@ namespace MyUtilities
             131,12,16,21,17,4,2,8
         };
 
-        public static string EncryptString(string src)
+        public string EncryptString(string src)
         {
 
             byte[] p = Encoding.ASCII.GetBytes(src.ToCharArray());
@@ -52,7 +52,7 @@ namespace MyUtilities
 
         }
 
-        public static string DecryptString(string src)
+        public string DecryptString(string src)
         {          
             try
             {
