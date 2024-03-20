@@ -1,6 +1,7 @@
 # MyUtilities
 Created utility to automate daily needed activities
 # Github CI Action
+<code>
 name: SonarCloud
 on:
   workflow_dispatch:
@@ -51,4 +52,4 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"YugandharGT_MyUtilities" /o:"yugandhargt" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build MyUtilities.csproj
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-
+</code>
