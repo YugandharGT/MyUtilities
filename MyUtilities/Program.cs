@@ -10,7 +10,7 @@ namespace MyUtilities
         static void Main(string[] args)
         {
 
-            new WrapperClass("", "").InitiateOcrConversion();
+            //new WrapperClass("", "").InitiateOcrConversion();
            
         }
     }
@@ -102,7 +102,7 @@ namespace MyUtilities
 
         public void InitiateOcrConversion()
         {
-            OCRConversion.ImagetoPdfConvertion(_filePath, _pdfFilePath);
+            //OCRConversion.ImagetoPdfConvertion(_filePath, _pdfFilePath);
         }
 
         public void InitiateSecurity()
