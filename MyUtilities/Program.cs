@@ -9,9 +9,9 @@ namespace MyUtilities
     {
         static void Main(string[] args)
         {
+            var sourcePath = ConfigurationManager.AppSettings["PdfToWordFile"];
+            new WrapperClass(sourcePath).InitiateConversion();
 
-            //new WrapperClass("", "").InitiateOcrConversion();
-           
         }
     }
 
@@ -67,10 +67,10 @@ namespace MyUtilities
         public void InitiateConversion()
         {
             // Get the file path of the PDF file from the application configuration
-            string sourcePath = ConfigurationManager.AppSettings["PdfToWordFile"];
+            //string sourcePath = ConfigurationManager.AppSettings["PdfToWordFile"];
 
             // Check if the file path is null or empty
-            if (string.IsNullOrEmpty(sourcePath))
+            if (string.IsNullOrEmpty(_filePath))
             {
                 // Display an error message and return
                 Console.WriteLine("Configured file path is either null or empty");
@@ -79,7 +79,7 @@ namespace MyUtilities
             }
 
             // Check if the file exists at the specified path
-            if (!File.Exists(sourcePath))
+            if (!File.Exists(_filePath))
             {
                 // Display an error message and return
                 Console.WriteLine("Configured file not exists in the path");
@@ -90,7 +90,7 @@ namespace MyUtilities
             try
             {
                 // Call the method to perform the conversion
-                WordConverter.ConvertsPdfToWord(sourcePath);
+                WordConverter.ConvertsPdfToWord(_filePath);
             }
             catch (Exception ex)
             {
