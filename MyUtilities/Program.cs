@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Text.Json;
 using MyUtilities;
 
 namespace MyUtilities
@@ -9,11 +11,83 @@ namespace MyUtilities
     {
         static void Main(string[] args)
         {
-            var sourcePath = ConfigurationManager.AppSettings["PdfToWordFile"];
-            new WrapperClass(sourcePath).InitiateConversion();
+            // var sourcePath = ConfigurationManager.AppSettings["PdfToWordFile"];
+            // new WrapperClass(sourcePath).InitiateConversion();
+            string variablesPayload = @"
+            {
+                ""courseCode"": ""S2T-8"",
+                ""coursestartDate"": ""2026-01-12"",
+                ""coursePartnership"": ""Bishops College"",
+                ""courseRollingCohort"": true,
+                ""learnerCrmId"": ""001203030dtrsd"",
+                ""learnerName"": ""User Name"",
+                ""learnerEmail"": ""User.Name@email.com"",
+                ""LearnerUelId"": ""343SFSA"",
+                ""tutorCrmId"": ""001560660DSAD"",
+                ""tutorName"": ""Dave Jones"",
+                ""tutorEmail"": ""Dave.Jones@email.com"" 
+            }";
+
+            JsonObject result = variablesPayload.ToJsonObject();
+
+            foreach (var prop in result.JsonKeys)
+            {
+                Console.WriteLine($"{prop.Key}: Value = {prop.Value.Value}, Type = {prop.Value.DataType}");
+            }
 
         }
     }
+public class JsonValueObject
+{
+    public object Value { get; set; }
+    public string DataType { get; set; }
+}
+
+public class JsonObject
+{
+    public Dictionary<string, JsonValueObject> JsonKeys { get; set; } = new();
+}
+
+public static class JsonExtensions
+{
+    /// <summary>
+    /// Converts a JSON payload string into an instance of class object, mapping each property to another class object with its value and data type to generate JSON Schema Definition.
+    /// </summary>
+    /// <param name="jsonPayload"></param>
+    /// <returns></returns>
+    public static JsonObject ToJsonObject(this string jsonPayload)
+        {
+            var JsonObject = new JsonObject();
+            using var doc = JsonDocument.Parse(jsonPayload);
+
+            foreach (var element in doc.RootElement.EnumerateObject())
+            {
+                var value = GetValue(element.Value);
+                var type = element.Value.ValueKind.ToString();
+
+                JsonObject.JsonKeys[element.Name] = new JsonValueObject
+                {
+                    Value = value,
+                    DataType = type
+                };
+            }
+
+            return JsonObject;
+        }
+
+    private static object GetValue(JsonElement element)
+    {
+        return element.ValueKind switch
+        {
+            JsonValueKind.String => element.GetString(),
+            JsonValueKind.Number => element.TryGetInt64(out var l) ? l : element.GetDouble(),
+            JsonValueKind.True => true,
+            JsonValueKind.False => false,
+            JsonValueKind.Null => null,
+            _ => element.ToString()
+        };
+    }
+}
 
     public interface IWrapper
     {
